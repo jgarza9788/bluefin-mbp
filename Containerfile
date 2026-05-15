@@ -8,16 +8,8 @@ RUN make
 # Main image
 FROM ghcr.io/ublue-os/bluefin:latest
 
-# Enable RPM Fusion nonfree (required for broadcom-wl)
-RUN rpm-ostree install \
-    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm \
-    || true
-
-# Install Broadcom BCM4360 Wi-Fi driver
-# akmod-wl (module rebuild on kernel update) is not yet packaged for Fedora 44;
-# layer it manually after rebase: rpm-ostree install akmod-wl
-RUN rpm-ostree install broadcom-wl \
-    && rpm-ostree cleanup -m
+# NOTE: broadcom-wl / akmod-wl are not yet packaged for Fedora 44 in RPM Fusion nonfree.
+# Wi-Fi must be installed manually after rebase — see README "Wi-Fi setup" section.
 
 # Install mbpfan built from source
 COPY --from=mbpfan-builder /tmp/mbpfan/bin/mbpfan /usr/sbin/mbpfan

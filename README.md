@@ -6,18 +6,17 @@ A custom [Universal Blue](https://universal-blue.org/) / Bluefin OCI image targe
 
 ## Hardware Targets
 
-| Component | Hardware | Driver |
-|-----------|----------|--------|
-| Wi-Fi | Broadcom BCM4360 | `akmod-wl` / `broadcom-wl` (RPM Fusion nonfree) |
-| GPU | NVIDIA GT 650M | Nouveau (open-source) |
-| Thermal | MacBook Pro fans | `mbpfan` |
+| Component | Hardware | Driver | Status |
+|-----------|----------|--------|--------|
+| Wi-Fi | Broadcom BCM4360 | `akmod-wl` / `broadcom-wl` (RPM Fusion nonfree) | Manual post-rebase step (not yet in F44 repos) |
+| GPU | NVIDIA GT 650M | Nouveau (open-source) | Built into kernel |
+| Thermal | MacBook Pro fans | `mbpfan` | Included in image |
 
 ## What's included
 
 - All stock [Bluefin](https://projectbluefin.io/) features (GNOME, uBlue tooling, Flatpak apps)
-- Broadcom BCM4360 Wi-Fi via `akmod-wl` (recompiles the kernel module automatically on updates)
 - `mbpfan` enabled at boot for proper fan speed management
-- `ujust` recipes for post-install hardware verification
+- `ujust` recipes for post-install hardware setup and verification
 
 ## Rebase from any Fedora Atomic desktop
 
@@ -37,14 +36,24 @@ systemctl reboot
 
 ## Post-install
 
-After first boot, verify hardware is working:
+After first boot, run the setup recipe and check hardware status:
 
 ```bash
-ujust setup-mbp   # start mbpfan + check wl driver
+ujust setup-mbp   # verify mbpfan is running
 ujust check-hw    # full hardware status report
 ```
 
-If the `wl` module is not loaded on first boot, reboot once — `akmods` compiles the Broadcom driver on first boot and it will be available after restart.
+## Wi-Fi setup
+
+`broadcom-wl` and `akmod-wl` are not yet packaged for Fedora 44 in RPM Fusion nonfree.
+Once you're on the live system, check RPM Fusion availability and install:
+
+```bash
+ujust install-wifi   # installs broadcom-wl + akmod-wl, then reboot
+ujust check-wifi     # confirm wl module is loaded
+```
+
+Once RPM Fusion ships F44 packages, Wi-Fi will be moved back into the image automatically.
 
 ## Building locally
 
@@ -56,9 +65,9 @@ docker build -t bluefin-mbp:local -f Containerfile .
 
 ## Notes
 
-- The image tracks `bluefin:latest` and rebuilds weekly, so it stays current with upstream Fedora and Bluefin updates.
+- The image tracks `bluefin:latest` and rebuilds weekly, staying current with Fedora and Bluefin updates.
 - Desktop environment is stock Bluefin GNOME — no customizations beyond hardware drivers.
-- `akmod-wl` handles kernel module recompilation automatically across kernel updates via `akmods`.
+- `mbpfan` is compiled from source ([dgraziotin/mbpfan](https://github.com/dgraziotin/mbpfan)) until an official F44 package lands.
 
 ## Based on
 
