@@ -1,0 +1,17 @@
+name: bluefin-mbp
+description: Bluefin-based OCI image for MacBook Pro 2013
+base-image: ghcr.io/ublue-os/bluefin
+image-version: latest
+
+hardware:
+  wifi: Broadcom BCM4360 (akmod-wl)
+  gpu: NVIDIA GT 650M (Nouveau)
+  thermal: mbpfan
+
+packages:
+  - akmod-wl
+  - broadcom-wl
+  - mbpfan
+
+services:
+  - mbpfan
