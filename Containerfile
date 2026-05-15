@@ -21,7 +21,7 @@ RUN rpm-ostree install \
     && rpm-ostree cleanup -m
 
 # Install mbpfan built from source
-COPY --from=mbpfan-builder /tmp/mbpfan/mbpfan /usr/sbin/mbpfan
+COPY --from=mbpfan-builder /tmp/mbpfan/bin/mbpfan /usr/sbin/mbpfan
 COPY --from=mbpfan-builder /tmp/mbpfan/mbpfan.conf /etc/mbpfan.conf
 COPY --from=mbpfan-builder /tmp/mbpfan/mbpfan.service /usr/lib/systemd/system/mbpfan.service
 RUN chmod +x /usr/sbin/mbpfan
